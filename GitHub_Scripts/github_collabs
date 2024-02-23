@@ -36,7 +36,7 @@ curl -s -u "${USERNAME}:${TOKEN}" "${url}"
 # Function to List All Colaborators with Read Access
 function list_read_access_users {
 	local endpoint="repos/${REPO_OWNER}/${REPO_NAME}/collaborators"
-	collaborators="$(github_api "${endpoint}")"
+	collaborators="$(github_api "${endpoint}" | jq -r '.[] | select(.permissions.pull == true) | .login')"
 
 	# Display List of Collaborators
 	if [[ -z "$collaborators" ]]; then
