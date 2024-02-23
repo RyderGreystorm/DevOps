@@ -1,0 +1,62 @@
+#!/bin/bash
+
+########################################################
+
+# Author: Godbless Biekro
+# Description: List users with read access
+# Date: 23rd Feb, 2024
+
+# Version: 1.0.0
+
+########################################################
+
+# CALLING HELPER FUNCTION
+#helper "$@"
+
+#Github API URL
+API_URL="https://api.github.com"
+
+#GIT HUB USERNAME AND ACCESS TOKEN
+USERNAME=$username
+TOKEN=$token
+
+#USER AND REPOSITORY INFORMATION
+REPO_OWNER=$1
+REPO_NAME=$2
+
+#FUNCTION TO MAKE A GET REQUEST TO THE GITHUB API
+function github_api {
+local endpoint="$1"
+local url="${API_URL}/${endpoint}"
+
+#Send Get Request to GitHub API with Authentication
+curl -s -u "${USERNAME}:${TOKEN}" "${url}"
+}
+
+# Function to List All Colaborators with Read Access
+function list_read_access_users {
+	local endpoint="repos/${REPO_OWNER}/${REPO_NAME}/collaborators"
+	collaborators="$(github_api "${endpoint}")"
+
+	# Display List of Collaborators
+	if [[ -z "$collaborators" ]]; then
+		echo "No collaborators with read access for ${REPO_OWNER}/${REPO_NAME}"
+	else
+		echo "Users with read access for ${REPO_OWNER}/${REPO_NAME}"
+		echo "$collaborators"
+	fi
+}
+
+function helper {
+	expected_cmdli_args=2
+	if [ $# -lt expected_cmdli_args	]; then
+		echo "Invalid Number of arguments Provided"
+		echo "Requires Two arguments"
+		echo "Hint for first cmd arg: Repository owner"
+		echo "Hint for second cmd arg: Repository name"
+	fi
+}
+
+# Calling the collaborators listing function
+
+list_read_access_users
