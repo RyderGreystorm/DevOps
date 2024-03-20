@@ -1,0 +1,37 @@
+---
+ - name: Install LAMP STACK
+   hosts: webservers
+   become: true
+   become_user: root
+   gather_facts: true
+ 
+   tasks :
+        - name: "Install apache2"
+          apt:
+            name: apache2
+            update_cache: yes
+            state: present
+        - name: Start Apache Server
+          service:
+            name: apache2
+            state: started
+        - name: "Install PHP and required packages"
+          apt:
+            name: "{{ item }}"
+            state: present
+          loop:
+            - php
+            - libapache2-mod-php
+            - php-mysql
+            - php-xml
+            - php-gd
+            - php-mbstring
+            - php-curl
+            - php-json
+            - php-zip
+            - php-cli
+ 
+        - name: "Install MySQL Server"
+          apt:
+            name: mysql-server
+            state: present
